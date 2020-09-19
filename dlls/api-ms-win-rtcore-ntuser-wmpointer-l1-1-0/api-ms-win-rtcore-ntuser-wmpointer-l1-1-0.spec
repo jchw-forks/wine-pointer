@@ -21,5 +21,5 @@
 @ stub GetRawPointerDeviceData
 @ stub InitializeTouchInjection
 @ stub InjectTouchInput
-@ stub IsMouseInPointerEnabled
+@ stdcall IsMouseInPointerEnabled() user32.IsMouseInPointerEnabled
 @ stub SkipPointerFrameMessages

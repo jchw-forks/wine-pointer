@@ -49,6 +49,9 @@ WINE_DEFAULT_DEBUG_CHANNEL(win);
 static short iF10Key = 0;
 static short iMenuSysKey = 0;
 
+extern BOOL global_mouse_in_pointer_can_promote;
+extern MSG global_mouse_in_pointer_original_msg;
+
 /***********************************************************************
  *           DEFWND_HandleWindowPosChanged
  *
@@ -1073,6 +1076,19 @@ LRESULT WINAPI DefWindowProcW(
             HWND hwndIME = ImmGetDefaultIMEWnd( hwnd );
             if (hwndIME)
                 result = SendMessageW( hwndIME, msg, wParam, lParam );
+        }
+        break;
+
+    case WM_POINTERUPDATE:
+    case WM_POINTERDOWN:
+    case WM_POINTERUP:
+    case WM_POINTERWHEEL:
+    case WM_POINTERHWHEEL:
+    case WM_POINTERLEAVE:
+        if (global_mouse_in_pointer_can_promote) {
+            global_mouse_in_pointer_can_promote = FALSE;
+            MSG *msg = &global_mouse_in_pointer_original_msg;
+            result = PostMessageW( hwnd, msg->message, msg->wParam, msg->lParam );
         }
         break;
 

@@ -54,6 +54,7 @@ WINE_DEFAULT_DEBUG_CHANNEL(win);
 WINE_DECLARE_DEBUG_CHANNEL(keyboard);
 
 INT global_key_state_counter = 0;
+BOOL global_mouse_in_pointer = FALSE;
 
 /***********************************************************************
  *           get_key_state
@@ -1294,10 +1295,21 @@ int WINAPI GetMouseMovePointsEx(UINT size, LPMOUSEMOVEPOINT ptin, LPMOUSEMOVEPOI
  */
 BOOL WINAPI EnableMouseInPointer(BOOL enable)
 {
-    FIXME("(%#x) stub\n", enable);
+    if (enable != TRUE) {
+        SetLastError(ERROR_INVALID_PARAMETER);
+        return FALSE;
+    }
 
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return FALSE;
+    global_mouse_in_pointer = TRUE;
+    return TRUE;
+}
+
+/***********************************************************************
+ *		IsMouseInPointerEnabled (USER32.@)
+ */
+BOOL WINAPI IsMouseInPointerEnabled()
+{
+    return global_mouse_in_pointer;
 }
 
 static DWORD CALLBACK devnotify_window_callback(HANDLE handle, DWORD flags, DEV_BROADCAST_HDR *header)

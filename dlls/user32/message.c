@@ -51,6 +51,10 @@ WINE_DEFAULT_DEBUG_CHANNEL(msg);
 WINE_DECLARE_DEBUG_CHANNEL(relay);
 WINE_DECLARE_DEBUG_CHANNEL(key);
 
+extern BOOL global_mouse_in_pointer;
+BOOL global_mouse_in_pointer_can_promote;
+MSG global_mouse_in_pointer_original_msg;
+
 #define WM_NCMOUSEFIRST WM_NCMOUSEMOVE
 #define WM_NCMOUSELAST  (WM_NCMOUSEFIRST+(WM_MOUSELAST-WM_MOUSEFIRST))
 
@@ -2378,6 +2382,85 @@ static BOOL process_keyboard_message( MSG *msg, UINT hw_id, HWND hwnd_filter,
 
 
 /***********************************************************************
+ *          translate_mouse_to_pointer_message
+ *
+ * returns FALSE if the message was not translated and should be discarded.
+ */
+static BOOL translate_mouse_to_pointer_message( MSG *msg )
+{
+    global_mouse_in_pointer_can_promote = TRUE;
+    global_mouse_in_pointer_original_msg = *msg;
+
+    /* WM_POINTER* events use screen-relative coordinates. */
+    ClientToScreen( msg->hwnd, &msg->pt );
+    msg->lParam = MAKELONG( msg->pt.x, msg->pt.y );
+
+    int buttons_down = (
+        ((msg->wParam & MK_LBUTTON) != 0 ) +
+        ((msg->wParam & MK_RBUTTON) != 0 ) +
+        ((msg->wParam & MK_MBUTTON) != 0 ) +
+        ((msg->wParam & MK_XBUTTON1) != 0 ) +
+        ((msg->wParam & MK_XBUTTON2) != 0 )
+    );
+
+    msg->wParam = MAKELONG(
+        1, /* pointer id (always 1 for mouse) */
+        ((msg->wParam & MK_LBUTTON) != 0 ? POINTER_FLAG_FIRSTBUTTON : 0) |
+        ((msg->wParam & MK_RBUTTON) != 0 ? POINTER_FLAG_SECONDBUTTON : 0) |
+        ((msg->wParam & MK_MBUTTON) != 0 ? POINTER_FLAG_THIRDBUTTON : 0) |
+        ((msg->wParam & MK_XBUTTON1) != 0 ? POINTER_FLAG_FOURTHBUTTON : 0) |
+        ((msg->wParam & MK_XBUTTON2) != 0 ? POINTER_FLAG_FIFTHBUTTON : 0) |
+        (buttons_down > 0 ? POINTER_FLAG_INCONTACT : 0) |
+        POINTER_FLAG_INRANGE
+    );
+
+    switch (msg->message) {
+    case WM_MOUSEMOVE:
+        msg->message = WM_POINTERUPDATE;
+        return TRUE;
+
+    case WM_LBUTTONDOWN:
+    case WM_RBUTTONDOWN:
+    case WM_MBUTTONDOWN:
+    case WM_XBUTTONDOWN:
+        /* WM_POINTERDOWN should not be set if buttons were already down. */
+        if (buttons_down == 1) {
+            msg->message = WM_POINTERDOWN;
+        } else {
+            msg->message = WM_POINTERUPDATE;
+        }
+        return TRUE;
+
+    case WM_LBUTTONUP:
+    case WM_RBUTTONUP:
+    case WM_MBUTTONUP:
+    case WM_XBUTTONUP:
+        /* WM_POINTERUP should only be set when all buttons are up. */
+        if (buttons_down == 0) {
+            msg->message = WM_POINTERUP;
+        } else {
+            msg->message = WM_POINTERUPDATE;
+        }
+        return TRUE;
+
+    case WM_MOUSEWHEEL:
+        msg->message = WM_POINTERWHEEL;
+        return TRUE;
+
+    case WM_MOUSEHWHEEL:
+        msg->message = WM_POINTERHWHEEL;
+        return TRUE;
+
+    case WM_MOUSELEAVE:
+        msg->message = WM_POINTERLEAVE;
+        return TRUE;
+
+    default:
+        return FALSE;
+    }
+}
+
+/***********************************************************************
  *          process_mouse_message
  *
  * returns TRUE if the contents of 'msg' should be passed to the application
@@ -2460,7 +2543,6 @@ static BOOL process_mouse_message( MSG *msg, UINT hw_id, ULONG_PTR extra_info, H
     msg->lParam = MAKELONG( pt.x, pt.y );
 
     /* translate double clicks */
-
     if ((msg->message == WM_LBUTTONDOWN) ||
         (msg->message == WM_RBUTTONDOWN) ||
         (msg->message == WM_MBUTTONDOWN) ||
@@ -2500,6 +2582,15 @@ static BOOL process_mouse_message( MSG *msg, UINT hw_id, ULONG_PTR extra_info, H
         if (message < first || message > last) return FALSE;
     }
     msg->wParam = wparam;
+
+    /* FIXME: handle non-client messages */
+    if (global_mouse_in_pointer && message >= WM_NCMOUSEFIRST && message <= WM_MOUSELAST) {
+        /* translate the message into a WM_POINTER message */
+        if (!translate_mouse_to_pointer_message( msg )) {
+            return FALSE;
+        }
+        message = msg->message;
+    }
 
     /* message is accepted now (but may still get dropped) */
 
