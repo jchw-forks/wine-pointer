@@ -103,6 +103,7 @@
 @ stdcall CreateMDIWindowW(wstr wstr long long long long long long long long)
 @ stdcall CreateMenu()
 @ stdcall CreatePopupMenu()
+@ stdcall CreateSyntheticPointerDevice(long long long)
 # @ stub CreateSystemThreads
 @ stdcall CreateWindowExA(long str str long long long long long long long long ptr)
 @ stdcall CreateWindowExW(long wstr wstr long long long long long long long long ptr)
@@ -161,6 +162,7 @@
 @ stdcall DestroyIcon(long)
 @ stdcall DestroyMenu(long)
 # @ stub DestroyReasons
+@ stdcall DestroySyntheticPointerDevice(long long long)
 @ stdcall DestroyWindow(long)
 # @ stub DeviceEventWorker
 @ stdcall DialogBoxIndirectParamA(long ptr long ptr long)
@@ -356,7 +358,25 @@
 @ stdcall GetOpenClipboardWindow()
 @ stdcall GetParent(long)
 @ stdcall GetPhysicalCursorPos(ptr)
+@ stdcall GetPointerCursorId(long ptr)
+@ stdcall GetPointerDevice(long ptr)
+@ stdcall GetPointerDeviceCursors(long ptr ptr)
+@ stdcall GetPointerDeviceProperties(long ptr ptr)
+@ stdcall GetPointerDeviceRects(long ptr ptr)
 @ stdcall GetPointerDevices(ptr ptr)
+@ stdcall GetPointerFrameInfo(long ptr ptr)
+@ stdcall GetPointerFrameInfoHistory(long ptr ptr ptr)
+@ stdcall GetPointerFramePenInfo(long ptr ptr)
+@ stdcall GetPointerFramePenInfoHistory(long ptr ptr ptr)
+@ stdcall GetPointerFrameTouchInfo(long ptr ptr)
+@ stdcall GetPointerFrameTouchInfoHistory(long ptr ptr ptr)
+@ stdcall GetPointerInfo(long ptr)
+@ stdcall GetPointerInfoHistory(long ptr ptr)
+@ stdcall GetPointerInputTransform(long long ptr)
+@ stdcall GetPointerPenInfo(long ptr)
+@ stdcall GetPointerPenInfoHistory(long ptr ptr)
+@ stdcall GetPointerTouchInfo(long ptr)
+@ stdcall GetPointerTouchInfoHistory(long ptr ptr)
 @ stdcall GetPointerType(long ptr)
 @ stdcall GetPriorityClipboardFormat(ptr long)
 @ stdcall GetProcessDefaultLayout(ptr)
@@ -371,6 +391,7 @@
 @ stdcall GetRawInputDeviceInfoA(ptr long ptr ptr)
 @ stdcall GetRawInputDeviceInfoW(ptr long ptr ptr)
 @ stdcall GetRawInputDeviceList(ptr ptr long)
+@ stdcall GetRawPointerDeviceData(long long long ptr ptr)
 # @ stub GetReasonTitleFromReasonCode
 @ stdcall GetRegisteredRawInputDevices(ptr ptr long)
 @ stdcall GetScrollBarInfo(long long ptr)
@@ -434,6 +455,7 @@
 # @ stub IMPSetIMEA
 # @ stub IMPSetIMEW
 @ stdcall ImpersonateDdeClientWindow(long long)
+@ stdcall InjectSyntheticPointerInput(long ptr long)
 @ stdcall InSendMessage()
 @ stdcall InSendMessageEx(ptr)
 @ stdcall InflateRect(ptr long long)
@@ -469,6 +491,7 @@
 # @ stub IsHungThread
 @ stdcall IsIconic(long)
 @ stdcall IsMenu(long)
+@ stdcall IsMouseInPointerEnabled()
 @ stdcall IsProcessDPIAware()
 @ stdcall IsRectEmpty(ptr)
 # @ stub IsServerSideWindow
@@ -603,6 +626,7 @@
 # @ stub RegisterMessagePumpHook
 @ stub RegisterNetworkCapabilities
 @ stdcall RegisterPointerDeviceNotifications(long long)
+@ stdcall RegisterPointerInputTarget(long long)
 @ stdcall RegisterPowerSettingNotification(long ptr long)
 @ stdcall RegisterRawInputDevices(ptr long long)
 @ stdcall RegisterServicesProcess(long)
@@ -742,6 +766,7 @@
 @ stdcall ShowWindowAsync(long long)
 @ stdcall ShutdownBlockReasonCreate(long wstr)
 @ stdcall ShutdownBlockReasonDestroy(long)
+@ stdcall SkipPointerFrameMessages(long)
 # @ stub SoftModalMessageBox
 @ stdcall SubtractRect(ptr ptr ptr)
 @ stdcall SwapMouseButton(long)
@@ -780,6 +805,7 @@
 @ stdcall UnregisterDeviceNotification(long)
 @ stdcall UnregisterHotKey(long long)
 # @ stub UnregisterMessagePumpHook
+@ stdcall UnregisterPointerInputTarget(long long)
 @ stdcall UnregisterPowerSettingNotification(ptr)
 @ stdcall UnregisterTouchWindow(long)
 # @ stub UnregisterUserApiHook

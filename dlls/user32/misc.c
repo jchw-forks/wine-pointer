@@ -483,54 +483,11 @@ BOOL WINAPI IsWindowRedirectedForPrint( HWND hwnd )
 }
 
 /**********************************************************************
- * RegisterPointerDeviceNotifications [USER32.@]
- */
-BOOL WINAPI RegisterPointerDeviceNotifications(HWND hwnd, BOOL notifyrange)
-{
-    FIXME("(%p %d): stub\n", hwnd, notifyrange);
-    return TRUE;
-}
-
-/**********************************************************************
- * GetPointerDevices [USER32.@]
- */
-BOOL WINAPI GetPointerDevices(UINT32 *device_count, POINTER_DEVICE_INFO *devices)
-{
-    FIXME("(%p %p): partial stub\n", device_count, devices);
-
-    if (!device_count)
-        return FALSE;
-
-    if (devices)
-        return FALSE;
-
-    *device_count = 0;
-    return TRUE;
-}
-
-/**********************************************************************
  * RegisterTouchHitTestingWindow [USER32.@]
  */
 BOOL WINAPI RegisterTouchHitTestingWindow(HWND hwnd, ULONG value)
 {
     FIXME("(%p %d): stub\n", hwnd, value);
-    return TRUE;
-}
-
-/**********************************************************************
- * GetPointerType [USER32.@]
- */
-BOOL WINAPI GetPointerType(UINT32 id, POINTER_INPUT_TYPE *type)
-{
-    FIXME("(%d %p): stub\n", id, type);
-
-    if(!id || !type)
-    {
-        SetLastError(ERROR_INVALID_PARAMETER);
-        return FALSE;
-    }
-
-    *type = PT_MOUSE;
     return TRUE;
 }
 
