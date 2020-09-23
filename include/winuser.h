@@ -3448,6 +3448,29 @@ typedef struct tagPOINTER_DEVICE_INFO {
     WCHAR               productString[POINTER_DEVICE_PRODUCT_STRING_MAX];
 } POINTER_DEVICE_INFO;
 
+typedef struct tagPOINTER_DEVICE_PROPERTY {
+    INT32  logicalMin;
+    INT32  logicalMax;
+    INT32  physicalMin;
+    INT32  physicalMax;
+    UINT32 unit;
+    UINT32 unitExponent;
+    USHORT usagePageId;
+    USHORT usageId;
+} POINTER_DEVICE_PROPERTY;
+
+typedef enum tagPOINTER_DEVICE_CURSOR_TYPE {
+    POINTER_DEVICE_CURSOR_TYPE_UNKNOWN,
+    POINTER_DEVICE_CURSOR_TYPE_TIP,
+    POINTER_DEVICE_CURSOR_TYPE_ERASER,
+    POINTER_DEVICE_CURSOR_TYPE_MAX
+} POINTER_DEVICE_CURSOR_TYPE;
+
+typedef struct tagPOINTER_DEVICE_CURSOR_INFO {
+    UINT32                     cursorId;
+    POINTER_DEVICE_CURSOR_TYPE cursor;
+} POINTER_DEVICE_CURSOR_INFO;
+
 enum tagPOINTER_INPUT_TYPE
 {
     PT_POINTER = 1,
@@ -3457,6 +3480,147 @@ enum tagPOINTER_INPUT_TYPE
     PT_TOUCHPAD,
 };
 typedef DWORD POINTER_INPUT_TYPE;
+
+typedef enum tagPOINTER_FLAGS {
+    POINTER_FLAG_NONE           = 0x00000000,
+    POINTER_FLAG_NEW            = 0x00000001,
+    POINTER_FLAG_INRANGE        = 0x00000002,
+    POINTER_FLAG_INCONTACT      = 0x00000004,
+    POINTER_FLAG_FIRSTBUTTON    = 0x00000010,
+    POINTER_FLAG_SECONDBUTTON   = 0x00000020,
+    POINTER_FLAG_THIRDBUTTON    = 0x00000040,
+    POINTER_FLAG_FOURTHBUTTON   = 0x00000080,
+    POINTER_FLAG_FIFTHBUTTON    = 0x00000100,
+    POINTER_FLAG_PRIMARY        = 0x00002000,
+    POINTER_FLAG_CONFIDENCE     = 0x00004000,
+    POINTER_FLAG_CANCELED       = 0x00008000,
+    POINTER_FLAG_DOWN           = 0x00010000,
+    POINTER_FLAG_UPDATE         = 0x00020000,
+    POINTER_FLAG_UP             = 0x00040000,
+    POINTER_FLAG_WHEEL          = 0x00080000,
+    POINTER_FLAG_HWHEEL         = 0x00100000,
+    POINTER_FLAG_CAPTURECHANGED = 0x00200000,
+    POINTER_FLAG_HASTRANSFORM   = 0x00400000
+} POINTER_FLAGS;
+
+typedef enum tagPOINTER_BUTTON_CHANGE_TYPE {
+    POINTER_CHANGE_NONE,
+    POINTER_CHANGE_FIRSTBUTTON_DOWN,
+    POINTER_CHANGE_FIRSTBUTTON_UP,
+    POINTER_CHANGE_SECONDBUTTON_DOWN,
+    POINTER_CHANGE_SECONDBUTTON_UP,
+    POINTER_CHANGE_THIRDBUTTON_DOWN,
+    POINTER_CHANGE_THIRDBUTTON_UP,
+    POINTER_CHANGE_FOURTHBUTTON_DOWN,
+    POINTER_CHANGE_FOURTHBUTTON_UP,
+    POINTER_CHANGE_FIFTHBUTTON_DOWN,
+    POINTER_CHANGE_FIFTHBUTTON_UP
+} POINTER_BUTTON_CHANGE_TYPE;
+
+typedef enum tagPEN_FLAGS {
+    PEN_FLAG_NONE     = 0x00000000,
+    PEN_FLAG_BARREL   = 0x00000001,
+    PEN_FLAG_INVERTED = 0x00000002,
+    PEN_FLAG_ERASER   = 0x00000004
+} PEN_FLAGS;
+
+typedef enum tagPEN_MASK {
+    PEN_MASK_NONE     = 0x00000000,
+    PEN_MASK_PRESSURE = 0x00000001,
+    PEN_MASK_ROTATION = 0x00000002,
+    PEN_MASK_TILT_X   = 0x00000004,
+    PEN_MASK_TILT_Y   = 0x00000008
+} PEN_MASK;
+
+typedef struct tagPOINTER_INFO {
+    POINTER_INPUT_TYPE         pointerType;
+    UINT32                     pointerId;
+    UINT32                     frameId;
+    POINTER_FLAGS              pointerFlags;
+    HANDLE                     sourceDevice;
+    HWND                       hwndTarget;
+    POINT                      ptPixelLocation;
+    POINT                      ptHimetricLocation;
+    POINT                      ptPixelLocationRaw;
+    POINT                      ptHimetricLocationRaw;
+    DWORD                      dwTime;
+    UINT32                     historyCount;
+    INT32                      InputData;
+    DWORD                      dwKeyStates;
+    UINT64                     PerformanceCount;
+    POINTER_BUTTON_CHANGE_TYPE ButtonChangeType;
+} POINTER_INFO;
+
+typedef struct tagPOINTER_PEN_INFO {
+    POINTER_INFO pointerInfo;
+    PEN_FLAGS    penFlags;
+    PEN_MASK     penMask;
+    UINT32       pressure;
+    UINT32       rotation;
+    INT32        tiltX;
+    INT32        tiltY;
+} POINTER_PEN_INFO;
+
+typedef enum tagTOUCH_FLAGS {
+    TOUCH_FLAG_NONE = 0x00000000,
+} TOUCH_FLAGS;
+
+typedef enum tagTOUCH_MASK {
+    TOUCH_MASK_NONE        = 0x00000000,
+    TOUCH_MASK_CONTACTAREA = 0x00000001,
+    TOUCH_MASK_ORIENTATION = 0x00000002,
+    TOUCH_MASK_PRESSURE    = 0x00000004
+} TOUCH_MASK;
+
+typedef struct tagPOINTER_TOUCH_INFO {
+    POINTER_INFO pointerInfo;
+    TOUCH_FLAGS  touchFlags;
+    TOUCH_MASK   touchMask;
+    RECT         rcContact;
+    RECT         rcContactRaw;
+    UINT32       orientation;
+    UINT32       pressure;
+} POINTER_TOUCH_INFO;
+
+typedef enum  {
+    POINTER_FEEDBACK_DEFAULT,
+    POINTER_FEEDBACK_INDIRECT,
+    POINTER_FEEDBACK_NONE
+} POINTER_FEEDBACK_MODE;
+
+typedef struct tagPOINTER_TYPE_INFO {
+    POINTER_INPUT_TYPE type;
+    union {
+        POINTER_TOUCH_INFO touchInfo;
+        POINTER_PEN_INFO   penInfo;
+    } DUMMYUNIONNAME;
+} POINTER_TYPE_INFO, *PPOINTER_TYPE_INFO;
+
+DECLARE_HANDLE(HSYNTHETICPOINTERDEVICE);
+
+typedef struct tagINPUT_TRANSFORM {
+    union {
+        struct {
+            float _11;
+            float _12;
+            float _13;
+            float _14;
+            float _21;
+            float _22;
+            float _23;
+            float _24;
+            float _31;
+            float _32;
+            float _33;
+            float _34;
+            float _41;
+            float _42;
+            float _43;
+            float _44;
+        } DUMMYSTRUCTNAME;
+        float m[4][4];
+    } DUMMYUNIONNAME;
+} INPUT_TRANSFORM;
 
 typedef struct tagAUDIODESCRIPTION
 {
@@ -3628,6 +3792,7 @@ WINUSERAPI HICON       WINAPI CreateIconFromResource(LPBYTE,UINT,BOOL,DWORD);
 WINUSERAPI HICON       WINAPI CreateIconFromResourceEx(LPBYTE,UINT,BOOL,DWORD,INT,INT,UINT);
 WINUSERAPI HMENU       WINAPI CreateMenu(void);
 WINUSERAPI HMENU       WINAPI CreatePopupMenu(void);
+WINUSERAPI HSYNTHETICPOINTERDEVICE WINAPI CreateSyntheticPointerDevice(POINTER_INPUT_TYPE,ULONG,POINTER_FEEDBACK_MODE);
 #define                       CreateWindowA(className,titleName,style,x,y,width,height,parent,menu,instance,param) CreateWindowExA(0,className,titleName,style,x,y,width,height,parent,menu,instance,param)
 #define                       CreateWindowW(className,titleName,style,x,y,width,height,parent,menu,instance,param) CreateWindowExW(0,className,titleName,style,x,y,width,height,parent,menu,instance,param)
 #define                       CreateWindow WINELIB_NAME_AW(CreateWindow)
@@ -3662,6 +3827,7 @@ WINUSERAPI BOOL        WINAPI DestroyCaret(void);
 WINUSERAPI BOOL        WINAPI DestroyCursor(HCURSOR);
 WINUSERAPI BOOL        WINAPI DestroyIcon(HICON);
 WINUSERAPI BOOL        WINAPI DestroyMenu(HMENU);
+WINUSERAPI void        WINAPI DestroySyntheticPointerDevice(HSYNTHETICPOINTERDEVICE);
 WINUSERAPI BOOL        WINAPI DestroyWindow(HWND);
 #define                       DialogBoxA(inst,template,owner,func) DialogBoxParamA(inst,template,owner,func,0)
 #define                       DialogBoxW(inst,template,owner,func) DialogBoxParamW(inst,template,owner,func,0)
@@ -3850,6 +4016,7 @@ WINUSERAPI UINT        WINAPI GetRawInputDeviceInfoA(HANDLE,UINT,LPVOID,PUINT);
 WINUSERAPI UINT        WINAPI GetRawInputDeviceInfoW(HANDLE,UINT,LPVOID,PUINT);
 #define                       GetRawInputDeviceInfo WINELIB_NAME_AW(GetRawInputDeviceInfo)
 WINUSERAPI UINT        WINAPI GetRawInputDeviceList(PRAWINPUTDEVICELIST,PUINT,UINT);
+WINUSERAPI BOOL        WINAPI GetRawPointerDeviceData(UINT32,UINT32,UINT32,POINTER_DEVICE_PROPERTY *,LONG *);
 WINUSERAPI UINT        WINAPI GetRegisteredRawInputDevices(PRAWINPUTDEVICE,PUINT,UINT);
 WINUSERAPI BOOL        WINAPI GetLayeredWindowAttributes(HWND,COLORREF*,BYTE*,DWORD*);
 WINUSERAPI HMENU       WINAPI GetMenu(HWND);
@@ -3883,6 +4050,25 @@ WINUSERAPI HWND        WINAPI GetNextDlgTabItem(HWND,HWND,BOOL);
 WINUSERAPI HWND        WINAPI GetOpenClipboardWindow(void);
 WINUSERAPI HWND        WINAPI GetParent(HWND);
 WINUSERAPI BOOL        WINAPI GetPhysicalCursorPos(POINT*);
+WINUSERAPI BOOL        WINAPI GetPointerCursorId(UINT32,UINT32 *);
+WINUSERAPI BOOL        WINAPI GetPointerDevice(HANDLE,POINTER_DEVICE_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerDeviceCursors(HANDLE,UINT32 *,POINTER_DEVICE_CURSOR_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerDeviceProperties(HANDLE,UINT32 *,POINTER_DEVICE_PROPERTY *);
+WINUSERAPI BOOL        WINAPI GetPointerDeviceRects(HANDLE,RECT *,RECT *);
+WINUSERAPI BOOL        WINAPI GetPointerDevices(UINT32 *,POINTER_DEVICE_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerFrameInfo(UINT32,UINT32 *,POINTER_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerFrameInfoHistory(UINT32,UINT32 *,UINT32 *,POINTER_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerFramePenInfo(UINT32,UINT32 *,POINTER_PEN_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerFramePenInfoHistory(UINT32,UINT32 *,UINT32 *,POINTER_PEN_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerFrameTouchInfo(UINT32,UINT32 *,POINTER_TOUCH_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerFrameTouchInfoHistory(UINT32,UINT32 *,UINT32 *,POINTER_TOUCH_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerInfo(UINT32,POINTER_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerInfoHistory(UINT32,UINT32 *,POINTER_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerInputTransform(UINT32,UINT32,INPUT_TRANSFORM *);
+WINUSERAPI BOOL        WINAPI GetPointerPenInfo(UINT32,POINTER_PEN_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerPenInfoHistory(UINT32,UINT32 *,POINTER_PEN_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerTouchInfo(UINT32,POINTER_TOUCH_INFO *);
+WINUSERAPI BOOL        WINAPI GetPointerTouchInfoHistory(UINT32,UINT32 *,POINTER_TOUCH_INFO *);
 WINUSERAPI BOOL        WINAPI GetPointerType(UINT32,POINTER_INPUT_TYPE *);
 WINUSERAPI INT         WINAPI GetPriorityClipboardFormat(UINT*,INT);
 WINUSERAPI BOOL        WINAPI GetProcessDefaultLayout(DWORD*);
@@ -3956,6 +4142,7 @@ WINUSERAPI BOOL        WINAPI GrayStringW(HDC,HBRUSH,GRAYSTRINGPROC,LPARAM,INT,I
 #define                       GrayString WINELIB_NAME_AW(GrayString)
 WINUSERAPI BOOL        WINAPI HideCaret(HWND);
 WINUSERAPI BOOL        WINAPI HiliteMenuItem(HWND,HMENU,UINT,UINT);
+WINUSERAPI BOOL        WINAPI InjectSyntheticPointerInput(HSYNTHETICPOINTERDEVICE,const POINTER_TYPE_INFO *,UINT32);
 WINUSERAPI BOOL        WINAPI InSendMessage(void);
 WINUSERAPI DWORD       WINAPI InSendMessageEx(LPVOID);
 WINUSERAPI BOOL        WINAPI InsertMenuA(HMENU,UINT,UINT,UINT_PTR,LPCSTR);
@@ -3991,6 +4178,7 @@ WINUSERAPI BOOL        WINAPI IsGUIThread(BOOL);
 WINUSERAPI BOOL        WINAPI IsHungAppWindow(HWND);
 WINUSERAPI BOOL        WINAPI IsIconic(HWND);
 WINUSERAPI BOOL        WINAPI IsMenu(HMENU);
+WINUSERAPI BOOL        WINAPI IsMouseInPointerEnabled(void);
 WINUSERAPI BOOL        WINAPI IsProcessDPIAware(void);
 WINUSERAPI BOOL        WINAPI IsTouchWindow(HWND,PULONG);
 WINUSERAPI BOOL        WINAPI IsValidDpiAwarenessContext(DPI_AWARENESS_CONTEXT);
@@ -4124,6 +4312,7 @@ WINUSERAPI HDEVNOTIFY  WINAPI RegisterDeviceNotificationW(HANDLE,LPVOID,DWORD);
 #define                       RegisterDeviceNotification WINELIB_NAME_AW(RegisterDeviceNotification)
 WINUSERAPI BOOL        WINAPI RegisterHotKey(HWND,INT,UINT,UINT);
 WINUSERAPI BOOL        WINAPI RegisterPointerDeviceNotifications(HWND,BOOL);
+WINUSERAPI BOOL        WINAPI RegisterPointerInputTarget(HWND,POINTER_INPUT_TYPE);
 WINUSERAPI HPOWERNOTIFY WINAPI RegisterPowerSettingNotification(HANDLE,LPCGUID,DWORD);
 WINUSERAPI BOOL        WINAPI RegisterRawInputDevices(PRAWINPUTDEVICE,UINT,UINT);
 WINUSERAPI BOOL        WINAPI RegisterShellHookWindow(HWND);
@@ -4264,6 +4453,7 @@ WINUSERAPI BOOL        WINAPI ShowWindow(HWND,INT);
 WINUSERAPI BOOL        WINAPI ShowWindowAsync(HWND,INT);
 WINUSERAPI BOOL        WINAPI ShutdownBlockReasonCreate(HWND,LPCWSTR);
 WINUSERAPI BOOL        WINAPI ShutdownBlockReasonDestroy(HWND);
+WINUSERAPI BOOL        WINAPI SkipPointerFrameMessages(UINT32);
 WINUSERAPI BOOL        WINAPI SubtractRect(LPRECT,const RECT*,const RECT*);
 WINUSERAPI BOOL        WINAPI SwapMouseButton(BOOL);
 WINUSERAPI BOOL        WINAPI SwitchDesktop(HDESK);
@@ -4298,6 +4488,7 @@ WINUSERAPI BOOL        WINAPI UnregisterClassW(LPCWSTR,HINSTANCE);
 #define                       UnregisterClass WINELIB_NAME_AW(UnregisterClass)
 WINUSERAPI BOOL        WINAPI UnregisterDeviceNotification(HDEVNOTIFY);
 WINUSERAPI BOOL        WINAPI UnregisterHotKey(HWND,INT);
+WINUSERAPI BOOL        WINAPI UnregisterPointerInputTarget(HWND,POINTER_INPUT_TYPE);
 WINUSERAPI BOOL        WINAPI UnregisterPowerSettingNotification(HPOWERNOTIFY);
 WINUSERAPI BOOL        WINAPI UnregisterTouchWindow(HWND);
 WINUSERAPI BOOL        WINAPI UpdateWindow(HWND);
