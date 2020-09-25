@@ -31,30 +31,6 @@
 
 WINE_DEFAULT_DEBUG_CHANNEL(pointer);
 
-/**********************************************************************
- * CreateSyntheticPointerDevice (USER32.@)
- */
-
-HSYNTHETICPOINTERDEVICE WINAPI CreateSyntheticPointerDevice(
-    POINTER_INPUT_TYPE type,
-    ULONG max,
-    POINTER_FEEDBACK_MODE mode)
-{
-    FIXME("(%d %d %d): stub\n", type, max, mode);
-
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return NULL;
-}
-
-/**********************************************************************
- * DestroySyntheticPointerDevice (USER32.@)
- */
-
-void WINAPI DestroySyntheticPointerDevice( HSYNTHETICPOINTERDEVICE device )
-{
-    FIXME("(%p): stub\n", device);
-}
-
 /***********************************************************************
  *		EnableMouseInPointer (USER32.@)
  */
@@ -166,10 +142,8 @@ BOOL WINAPI GetPointerDevices( UINT32 *device_count,
 BOOL WINAPI GetPointerFrameInfo( UINT32 id, UINT32 *count,
                                  POINTER_INFO *info )
 {
-    FIXME("(%d %p %p): stub\n", id, count, info);
-
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return FALSE;
+    UINT32 entry_count = 1;
+    return GetPointerFrameInfoHistory(id, &entry_count, count, info);
 }
 
 /**********************************************************************
@@ -193,10 +167,8 @@ BOOL WINAPI GetPointerFrameInfoHistory( UINT32 id, UINT32 *entry_count,
 BOOL WINAPI GetPointerFramePenInfo( UINT32 id, UINT32 *count,
                                     POINTER_PEN_INFO *info )
 {
-    FIXME("(%d %p %p): stub\n", id, count, info);
-
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return FALSE;
+    UINT32 entry_count = 1;
+    return GetPointerFramePenInfoHistory(id, &entry_count, count, info);
 }
 
 /**********************************************************************
@@ -220,10 +192,8 @@ BOOL WINAPI GetPointerFramePenInfoHistory( UINT32 id, UINT32 *entry_count,
 BOOL WINAPI GetPointerFrameTouchInfo( UINT32 id, UINT32 *count,
                                       POINTER_TOUCH_INFO *info )
 {
-    FIXME("(%d %p %p): stub\n", id, count, info);
-
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return FALSE;
+    UINT32 entry_count = 1;
+    return GetPointerFrameTouchInfoHistory(id, &entry_count, count, info);
 }
 
 /**********************************************************************
@@ -246,10 +216,8 @@ BOOL WINAPI GetPointerFrameTouchInfoHistory( UINT32 id, UINT32 *entry_count,
 
 BOOL WINAPI GetPointerInfo( UINT32 id, POINTER_INFO *info )
 {
-    FIXME("(%d %p): stub\n", id, info);
-
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return FALSE;
+    UINT32 entry_count = 1;
+    return GetPointerInfoHistory(id, &entry_count, info);
 }
 
 /**********************************************************************
@@ -284,10 +252,8 @@ BOOL WINAPI GetPointerInputTransform( UINT32 id, UINT32 history_count,
 
 BOOL WINAPI GetPointerPenInfo( UINT32 id, POINTER_PEN_INFO *info )
 {
-    FIXME("(%d %p): stub\n", id, info);
-
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return FALSE;
+    UINT32 entry_count = 1;
+    return GetPointerPenInfoHistory(id, &entry_count, info);
 }
 
 /**********************************************************************
@@ -309,10 +275,8 @@ BOOL WINAPI GetPointerPenInfoHistory( UINT32 id, UINT32 *entry_count,
 
 BOOL WINAPI GetPointerTouchInfo( UINT32 id, POINTER_TOUCH_INFO *info )
 {
-    FIXME("(%d %p): stub\n", id, info);
-
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return FALSE;
+    UINT32 entry_count = 1;
+    return GetPointerTouchInfoHistory(id, &entry_count, info);
 }
 
 /**********************************************************************
@@ -356,20 +320,6 @@ BOOL WINAPI GetRawPointerDeviceData( UINT32 id, UINT32 history_count,
                                      LONG *values )
 {
     FIXME("(%d %d %d %p %p): stub\n", id, history_count, prop_count, props, values);
-
-    SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
-    return FALSE;
-}
-
-/**********************************************************************
- * InjectSyntheticPointerInput (USER32.@)
- */
-
-BOOL WINAPI InjectSyntheticPointerInput( HSYNTHETICPOINTERDEVICE device,
-                                         const POINTER_TYPE_INFO *info,
-                                         UINT32 count )
-{
-    FIXME("(%p %p %d): stub\n", device, info, count);
 
     SetLastError(ERROR_CALL_NOT_IMPLEMENTED);
     return FALSE;

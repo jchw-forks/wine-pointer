@@ -7436,6 +7436,7 @@ for ac_header in \
 	linux/serial.h \
 	linux/types.h \
 	linux/ucdrom.h \
+	linux/uinput.h \
 	lwp.h \
 	mach-o/nlist.h \
 	mach-o/loader.h \
